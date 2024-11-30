@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neo4j Book-Author App</title>
+    <script>
+        async function sendData(url, data) {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            const result = await response.json();
+            alert(result.message);
+        }
+
+        function addAuthor() {
+            const name = document.getElementById('author-name').value;
+            sendData('/add_author', { name: name });
+        }
+
+        function addBook() {
+            const title = document.getElementById('book-title').value;
+            const year = document.getElementById('book-year').value;
+            sendData('/add_book', { title: title, year: year });
+        }
+
+        function linkAuthorBook() {
+            const author = document.getElementById('link-author').value;
+            const book = document.getElementById('link-book').value;
+            sendData('/link_author_book', { author: author, book: book });
+        }
+
+        async function getBooksByAuthor() {
+            const author = document.getElementById('search-author').value;
+            const response = await fetch(`/get_books_by_author/${author}`);
+            const books = await response.json();
+            const resultDiv = document.getElementById('books-result');
+            resultDiv.innerHTML = books.map(book => `${book.title} (${book.year})`).join('<br>');
+        }
+    </script>
+</head>
+<body>
+    <h1>Book-Author Management with Neo4j</h1>
+
+    <h2>Add Author</h2>
+    <input type="text" id="author-name" placeholder="Author Name">
+    <button onclick="addAuthor()">Add Author</button>
+
+    <h2>Add Book</h2>
+    <input type="text" id="book-title" placeholder="Book Title">
+    <input type="text" id="book-year" placeholder="Year">
+    <button onclick="addBook()">Add Book</button>
+
+    <h2>Link Author to Book</h2>
+    <input type="text" id="link-author" placeholder="Author Name">
+    <input type="text" id="link-book" placeholder="Book Title">
+    <button onclick="linkAuthorBook()">Link Author and Book</button>
+
+    <h2>Search Books by Author</h2>
+    <input type="text" id="se
