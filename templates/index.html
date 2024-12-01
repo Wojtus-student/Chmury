@@ -4,59 +4,151 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Neo4j Book-Author App</title>
-    <script>
-        async function sendData(url, data) {
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
-            const result = await response.json();
-            alert(result.message);
-        }
-
-        function addAuthor() {
-            const name = document.getElementById('author-name').value;
-            sendData('/add_author', { name: name });
-        }
-
-        function addBook() {
-            const title = document.getElementById('book-title').value;
-            const year = document.getElementById('book-year').value;
-            sendData('/add_book', { title: title, year: year });
-        }
-
-        function linkAuthorBook() {
-            const author = document.getElementById('link-author').value;
-            const book = document.getElementById('link-book').value;
-            sendData('/link_author_book', { author: author, book: book });
-        }
-
-        async function getBooksByAuthor() {
-            const author = document.getElementById('search-author').value;
-            const response = await fetch(`/get_books_by_author/${author}`);
-            const books = await response.json();
-            const resultDiv = document.getElementById('books-result');
-            resultDiv.innerHTML = books.map(book => `${book.title} (${book.year})`).join('<br>');
-        }
-    </script>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <h1>Book-Author Management with Neo4j</h1>
+    <div class="container">
+        <h1 class="my-4">Book-Author Management with Neo4j</h1>
 
-    <h2>Add Author</h2>
-    <input type="text" id="author-name" placeholder="Author Name">
-    <button onclick="addAuthor()">Add Author</button>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-header">Add Author</div>
+                    <div class="card-body">
+                        <input type="text" id="author-name" class="form-control mb-2" placeholder="Author Name">
+                        <button class="btn btn-primary" onclick="addAuthor()">Add Author</button>
+                        <div id="add-author-result" class="mt-2"></div>
+                    </div>
+                </div>
+            </div>
 
-    <h2>Add Book</h2>
-    <input type="text" id="book-title" placeholder="Book Title">
-    <input type="text" id="book-year" placeholder="Year">
-    <button onclick="addBook()">Add Book</button>
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-header">Show All Authors</div>
+                    <div class="card-body">
+                        <button class="btn btn-info" onclick="getAllAuthors()">Show All Authors</button>
+                        <div id="authors-result" class="mt-2"></div>
+                    </div>
+                </div>
+            </div>
 
-    <h2>Link Author to Book</h2>
-    <input type="text" id="link-author" placeholder="Author Name">
-    <input type="text" id="link-book" placeholder="Book Title">
-    <button onclick="linkAuthorBook()">Link Author and Book</button>
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-header">Delete Author</div>
+                    <div class="card-body">
+                        <input type="text" id="delete-author-name" class="form-control mb-2" placeholder="Author Name" list="author-list">
+                        <datalist id="author-list"></datalist>
+                        <button class="btn btn-danger" onclick="deleteAuthor()">Delete Author</button>
+                        <div id="delete-author-result" class="mt-2"></div>
+                    </div>
+                </div>
+            </div>
 
-    <h2>Search Books by Author</h2>
-    <input type="text" id="se
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-header">Link Author to Book</div>
+                    <div class="card-body">
+                        <input type="text" id="link-author" class="form-control mb-2" placeholder="Author Name" list="author-list">
+                        <datalist id="author-list"></datalist>
+                        <input type="text" id="link-book" class="form-control mb-2" placeholder="Book Title" list="book-list">
+                        <datalist id="book-list"></datalist>
+                        <button class="btn btn-primary" onclick="linkAuthorBook()">Link Author and Book</button>
+                        <div id="link-author-book-result" class="mt-2"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-header">Search Books by Author</div>
+                    <div class="card-body">
+                        <input type="text" id="search-author" class="form-control mb-2" placeholder="Author Name" list="author-list">
+                        <datalist id="author-list"></datalist>
+                        <button class="btn btn-primary" onclick="getBooksByAuthor()">Search</button>
+                        <div id="books-by-author-result" class="mt-2"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-header">Add Book</div>
+                    <div class="card-body">
+                        <input type="text" id="book-title" class="form-control mb-2" placeholder="Book Title">
+                        <input type="text" id="book-year" class="form-control mb-2" placeholder="Year">
+                        <button class="btn btn-primary" onclick="addBook()">Add Book</button>
+                        <div id="add-book-result" class="mt-2"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-header">Show All Books</div>
+                    <div class="card-body">
+                        <button class="btn btn-info" onclick="getAllBooks()">Show All Books</button>
+                        <div id="all-books-result" class="mt-2"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-header">Delete Book</div>
+                    <div class="card-body">
+                        <input type="text" id="delete-book-title" class="form-control mb-2" placeholder="Book Title" list="book-list">
+                        <datalist id="book-list"></datalist>
+                        <button class="btn btn-danger" onclick="deleteBook()">Delete Book</button>
+                        <div id="delete-book-result" class="mt-2"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-header">Search Books by Year Range</div>
+                    <div class="card-body">
+                        <input type="text" id="start-year" class="form-control mb-2" placeholder="Start Year">
+                        <input type="text" id="end-year" class="form-control mb-2" placeholder="End Year">
+                        <button class="btn btn-primary" onclick="getBooksByYearRange()">Search</button>
+                        <div id="books-by-year-range-result" class="mt-2"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-header">Search Authors by Book</div>
+                    <div class="card-body">
+                        <input type="text" id="search-book" class="form-control mb-2" placeholder="Book Title" list="book-list">
+                        <datalist id="book-list"></datalist>
+                        <button class="btn btn-primary" onclick="getAuthorsByBook()">Search</button>
+                        <div id="authors-by-book-result" class="mt-2"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-header">Find Shortest Path Between Authors</div>
+                    <div class="card-body">
+                        <input type="text" id="author1" class="form-control mb-2" placeholder="Author 1" list="author-list">
+                        <datalist id="author-list"></datalist>
+                        <input type="text" id="author2" class="form-control mb-2" placeholder="Author 2" list="author-list">
+                        <datalist id="author-list"></datalist>
+                        <button class="btn btn-primary" onclick="findShortestPath()">Find Path</button>
+                        <div id="shortest-path-result" class="mt-2"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
