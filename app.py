@@ -87,13 +87,27 @@ def find_books_by_multiple_authors():
         return jsonify({"message": "No books found for these authors."})
     return jsonify(books)
 
-@app.route('/find_shortest_path_between_authors', methods=['POST'])
-def find_shortest_path_between_authors():
-    data = request.json
-    author1 = data['author1']
-    author2 = data['author2']
-    result = db.find_shortest_path_between_authors(author1, author2)
-    return jsonify(result)
+@app.route('/get_authors_by_book/<book_title>', methods=['GET'])
+def get_authors_by_book(book_title):
+    authors = db.get_authors_by_book(book_title)
+    return jsonify(authors)
+
+@app.route('/get_books_by_year_range', methods=['GET'])
+def get_books_by_year_range():
+    start_year = int(request.args.get('start'))
+    end_year = int(request.args.get('end'))
+    books = db.get_books_by_year_range(start_year, end_year)
+    return jsonify(books)
+
+@app.route('/find_shortest_path', methods=['GET'])
+def find_shortest_path():
+    author1 = request.args.get('author1')
+    author2 = request.args.get('author2')
+    path = db.find_shortest_path_between_authors(author1, author2)
+    if 'path' in path:
+        return jsonify({"path": path['path']})
+    else:
+        return jsonify({"message": "No path found between the authors."})
 
 if __name__ == '__main__':
     app.run(debug=True)

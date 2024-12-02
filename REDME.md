@@ -43,6 +43,11 @@ Aplikacja składa się z następujących plików:
 - **Usuwanie książki**: `MATCH (b:Book {title: $title}) DETACH DELETE b`
 - **Wyświetlanie wszystkich autorów**: `MATCH (a:Author) RETURN a.name AS name`
 - **Wyświetlanie wszystkich książek**: `MATCH (b:Book) RETURN b.title AS title, b.year AS year`
+- **Wyszukiwanie współautorów**: `MATCH (a:Author {name: $author})<-[:WRITTEN_BY]-(b:Book)-[:WRITTEN_BY]->(coauthor:Author) RETURN DISTINCT coauthor.name AS name`
+- **Wyszukiwanie książek według wielu autorów**: `MATCH (b:Book)-[:WRITTEN_BY]->(a:Author) WHERE a.name IN $authors RETURN b.title AS title, b.year AS year, COLLECT(a.name) AS authors`
+- **Znajdowanie najkrótszej ścieżki między autorami**: `MATCH path = shortestPath((a1:Author {name: $author1})-[:WRITTEN_BY*]-(a2:Author {name: $author2})) RETURN [n IN nodes(path) | n.name] AS path`
+- **Wyszukiwanie autorów według książki**: `MATCH (b:Book {title: $title})-[:WRITTEN_BY]->(a:Author) RETURN a.name AS name`
+- **Wyszukiwanie książek według zakresu lat**: `MATCH (b:Book) WHERE b.year >= $start_year AND b.year <= $end_year RETURN b.title AS title, b.year AS year`
 
 ## 4. Instrukcja uruchomienia
 

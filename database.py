@@ -80,6 +80,23 @@ class Database:
             """, authors=authors)
             return [{"title": record["title"], "year": record["year"], "authors": record["authors"]} for record in result]
 
+    def get_authors_by_book(self, book_title):
+        with self.driver.session() as session:
+            result = session.run("""
+                MATCH (b:Book {title: $title})-[:WRITTEN_BY]->(a:Author)
+                RETURN a.name AS name
+            """, title=book_title)
+            return [{"name": record["name"]} for record in result]
+
+    def get_books_by_year_range(self, start_year, end_year):
+        with self.driver.session() as session:
+            result = session.run("""
+                MATCH (b:Book)
+                WHERE b.year >= $start_year AND b.year <= $end_year
+                RETURN b.title AS title, b.year AS year
+            """, start_year=start_year, end_year=end_year)
+            return [{"title": record["title"], "year": record["year"]} for record in result]
+
     def find_shortest_path_between_authors(self, author1, author2):
         with self.driver.session() as session:
             result = session.run("""

@@ -101,11 +101,11 @@ async function findShortestPath() {
     const author2 = document.getElementById('author2').value;
     const response = await fetch(`/find_shortest_path?author1=${author1}&author2=${author2}`);
     const result = await response.json();
-    const resultDiv = document.getElementById('shortest-path-result');
     if (result.message) {
-        resultDiv.innerHTML = result.message;
+        showResultWindow(result.message);
     } else {
-        resultDiv.innerHTML = result.path.map(node => node.name).join(' -> ');
+        const formattedPath = formatPath(result.path);
+        showResultWindow(formattedPath);
     }
 }
 
