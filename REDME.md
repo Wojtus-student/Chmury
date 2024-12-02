@@ -17,7 +17,7 @@ Aplikacja do zarządzania książkami i autorami z wykorzystaniem bazy danych gr
 
 ## 2. Projekt bazy danych
 
-### Diagram UML
+### Wizualizacjia
 ![Bloom-visualisation](bloom-visualisation.png)
 
 Diagram przedstawia strukturę bazy danych grafowej Neo4j, w której węzły reprezentują autorów i książki, a krawędzie reprezentują relacje między nimi.
