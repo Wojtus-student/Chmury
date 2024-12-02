@@ -1,32 +1,4 @@
-from neo4j import GraphDatabase
-
-class Database:
-    def __init__(self, uri, username, password):
-        self.driver = GraphDatabase.driver(uri, auth=(username, password))
-
-    def close(self):
-        self.driver.close()
-
-    def add_author(self, name):
-        with self.driver.session() as session:
-            session.run("CREATE (a:Author {name: $name})", name=name)
-
-    def add_book(self, title, year):
-        with self.driver.session() as session:
-            session.run("CREATE (b:Book {title: $title, year: $year})", title=title, year=year)
-
-    def link_author_book(self, author, book):
-        with self.driver.session() as session:
-            session.run("""
-                MATCH (a:Author {name: $author}), (b:Book {title: $book})
-                CREATE (b)-[:WRITTEN_BY]->(a)
-            """, author=author, book=book)
-
-# Neo4j configuration
-uri = "neo4j+ssc://af4ae13c.databases.neo4j.io"
-username = "neo4j"
-password = "uxIzr3XjB7RXu8wsIeYO_E8OTKfZhxdnRZwlUicNdLU"
-db = Database(uri, username, password)
+import csv
 
 # Sample data
 authors = [
@@ -55,15 +27,6 @@ books = [
     {"title": "Pride and Prejudice", "year": 1813}
 ]
 
-# Add authors
-for author in authors:
-    db.add_author(author)
-
-# Add books
-for book in books:
-    db.add_book(book["title"], book["year"])
-
-# Link authors to books
 links = [
     ("J.K. Rowling", "Harry Potter and the Philosopher's Stone"),
     ("George R.R. Martin", "A Game of Thrones"),
@@ -82,10 +45,6 @@ links = [
     ("Jane Austen", "Pride and Prejudice")
 ]
 
-for author, book in links:
-    db.link_author_book(author, book)
-
-# New sample data
 new_authors = [
     "Neil Gaiman", "Terry Pratchett", "Douglas Adams", "Jules Verne"
 ]
@@ -97,15 +56,6 @@ new_books = [
     {"title": "Twenty Thousand Leagues Under the Sea", "year": 1870}
 ]
 
-# Add new authors
-for author in new_authors:
-    db.add_author(author)
-
-# Add new books
-for book in new_books:
-    db.add_book(book["title"], book["year"])
-
-# Link new authors to books
 new_links = [
     ("Neil Gaiman", "Good Omens"),
     ("Terry Pratchett", "Good Omens"),
@@ -114,10 +64,6 @@ new_links = [
     ("Jules Verne", "Twenty Thousand Leagues Under the Sea")
 ]
 
-for author, book in new_links:
-    db.link_author_book(author, book)
-
-# Additional links between old and new authors and books
 additional_links = [
     ("Neil Gaiman", "Harry Potter and the Philosopher's Stone"),
     ("Terry Pratchett", "A Game of Thrones"),
@@ -281,7 +227,23 @@ additional_links = [
     ("James Joyce", "Murder on the Orient Express")
 ]
 
-for author, book in additional_links:
-    db.link_author_book(author, book)
+# Write authors to CSV
+with open('authors.csv', 'w', newline='') as csvfile:
+    writer = csv.writer(csvfile)
+    writer.writerow(['name'])
+    for author in authors + new_authors:
+        writer.writerow([author])
 
-db.close()
+# Write books to CSV
+with open('books.csv', 'w', newline='') as csvfile:
+    writer = csv.writer(csvfile)
+    writer.writerow(['title', 'year'])
+    for book in books + new_books:
+        writer.writerow([book['title'], book['year']])
+
+# Write links to CSV
+with open('links.csv', 'w', newline='') as csvfile:
+    writer = csv.writer(csvfile)
+    writer.writerow(['author', 'book'])
+    for link in links + new_links + additional_links:
+        writer.writerow(link)

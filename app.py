@@ -103,11 +103,14 @@ def get_books_by_year_range():
 def find_shortest_path():
     author1 = request.args.get('author1')
     author2 = request.args.get('author2')
+    if not author1 or not author2:
+        return jsonify({"message": "Both author1 and author2 parameters are required"}), 400
+
     path = db.find_shortest_path_between_authors(author1, author2)
     if 'path' in path:
         return jsonify({"path": path['path']})
     else:
-        return jsonify({"message": "No path found between the authors."})
+        return jsonify({"message": path['message']}), 404
 
 if __name__ == '__main__':
     app.run(debug=True)

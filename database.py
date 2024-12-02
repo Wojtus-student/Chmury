@@ -103,6 +103,7 @@ class Database:
                 MATCH path = shortestPath((a1:Author {name: $author1})-[:WRITTEN_BY*]-(a2:Author {name: $author2}))
                 RETURN [n IN nodes(path) | n.name] AS path
             """, author1=author1, author2=author2)
+            
             record = result.single()
             if record:
                 return {"path": record["path"]}
