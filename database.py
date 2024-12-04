@@ -98,14 +98,17 @@ class Database:
             return [{"title": record["title"], "year": record["year"]} for record in result]
 
     def find_shortest_path_between_authors(self, author1, author2):
+        query = """
+        MATCH p=shortestPath((a:Author {name: $author1})-[*]-(b:Author {name: $author2}))
+        RETURN nodes(p) AS path
+        """
         with self.driver.session() as session:
-            result = session.run("""
-                MATCH path = shortestPath((a1:Author {name: $author1})-[:WRITTEN_BY*]-(a2:Author {name: $author2}))
-                RETURN [n IN nodes(path) | n.name] AS path
-            """, author1=author1, author2=author2)
-            
-            record = result.single()
-            if record:
-                return {"path": record["path"]}
-            else:
-                return {"message": "No path found between the authors."}
+            result = session.run(query, author1=author1, author2=author2)
+            path = result.single()["path"]
+            formatted_path = []
+            for node in path:
+                if "Author" in node.labels:
+                    formatted_path.append({"type": "author", "name": node["name"]})
+                elif "Book" in node.labels:
+                    formatted_path.append({"type": "book", "title": node["title"]})
+            return {"path": formatted_path}

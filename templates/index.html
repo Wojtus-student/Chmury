@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="../script.js"></script>
     <title>Neo4j Book-Author App</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
@@ -266,10 +265,13 @@
             let formattedPath = '';
             for (let i = 0; i < path.length; i++) {
                 if (path[i] !== null) {
-                    if (i % 2 === 0) {
-                        formattedPath += `"${path[i]}"`;
-                    } else {
-                        formattedPath += ` -> "${path[i]}"`;
+                    if (path[i].type === 'author') {
+                        formattedPath += `"Author: ${path[i].name}"`;
+                    } else if (path[i].type === 'book') {
+                        formattedPath += `"Book: ${path[i].title}"`;
+                    }
+                    if (i < path.length - 1) {
+                        formattedPath += ' -> ';
                     }
                 }
             }

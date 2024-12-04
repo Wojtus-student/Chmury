@@ -108,7 +108,14 @@ def find_shortest_path():
 
     path = db.find_shortest_path_between_authors(author1, author2)
     if 'path' in path:
-        return jsonify({"path": path['path']})
+        # Assuming path['path'] contains a list of nodes (authors and books)
+        result = []
+        for node in path['path']:
+            if node['type'] == 'author':
+                result.append({"type": "author", "name": node['name']})
+            elif node['type'] == 'book':
+                result.append({"type": "book", "title": node['title']})
+        return jsonify({"path": result})
     else:
         return jsonify({"message": path['message']}), 404
 
