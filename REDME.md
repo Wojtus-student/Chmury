@@ -17,6 +17,10 @@ Aplikacja do zarządzania książkami i autorami z wykorzystaniem bazy danych gr
 
 ## 2. Projekt bazy danych
 
+### Diagram UML
+
+![UML](uml.png)
+
 ### Wizualizacjia
 ![Bloom-visualisation](bloom-visualisation.png)
 
@@ -51,37 +55,7 @@ Aplikacja składa się z następujących plików:
 
 ## 4. Instrukcja uruchomienia
 
-### 4.1 Wymagania
-- Python 3.x
-- Neo4j
-- Flask
-- neo4j Python driver
-
-### 4.2 Instalacja
-1. Sklonuj repozytorium:
-    ```bash
-    git clone https://github.com/yourusername/neo4j-book-author-app.git
-    cd neo4j-book-author-app
-    ```
-
-2. Zainstaluj wymagane pakiety:
-    ```bash
-    pip install -r requirements.txt
-    ```
-
-3. Skonfiguruj połączenie z bazą danych Neo4j w pliku `app.py`:
-    ```python
-    uri = "neo4j+ssc://your-database-uri"
-    username = "your-username"
-    password = "your-password"
-    ```
-
-4. Uruchom aplikację:
-    ```bash
-    python app.py
-    ```
-
-5. Otwórz przeglądarkę i przejdź do `http://127.0.0.1:5000`.
+projekt jest dostepny pod adresem : `http://127.0.0.1:5000`.
 
 ## 5. Autorzy
 - Wojciech Maciag
